@@ -2,7 +2,6 @@ package http
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/PaulTabaco/bookstore_oauth-api/src/domain/access_token"
 	"github.com/gin-gonic/gin"
@@ -23,13 +22,10 @@ func NewHandler(service access_token.Service) AccessTokenHandler {
 }
 
 func (h *accessTokenHandler) GetById(c *gin.Context) {
-	accessTokenId := strings.TrimSpace(c.Param("access_token_id"))
-	accessToken, err := h.service.GetById(accessTokenId)
+	accessToken, err := h.service.GetById(c.Param("access_token_id"))
 	if err != nil {
 		c.JSON(err.Status, err)
 		return
 	}
 	c.JSON(http.StatusOK, accessToken)
-
-	//c.JSON(http.StatusNotImplemented, "not implemented yet")
 }
