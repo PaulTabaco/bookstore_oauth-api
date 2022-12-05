@@ -11,7 +11,7 @@ var (
 func init() {
 	cluster = gocql.NewCluster("172.17.0.3")
 	cluster.Keyspace = "oauth"
-	cluster.Consistency = gocql.One //gocql.Quorum
+	cluster.Consistency = gocql.Quorum // gocql.One // gocql.Quorum
 }
 
 func GetSession() (*gocql.Session, error) {
