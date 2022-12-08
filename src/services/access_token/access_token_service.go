@@ -41,8 +41,26 @@ func (s service) GetById(accessTokenId string) (*access_token.AccessToken, *erro
 }
 
 func (s service) Create(request access_token.AccessTokenRequest) (*access_token.AccessToken, *errors.RestErr) {
+	if err := request.Validate(); err != nil {
+		return nil, err
+	}
+
+	// Support both grant types: client_credentials and password
+	var login_id string
+	var password string
+	switch request.GrantType {
+	case access_token.GrantTypePassword:
+		login_id = request.Username
+		password = request.Password
+	case access_token.GrantTypeClientCredentials:
+		login_id = request.ClientId
+		password = request.ClientSecret
+	default:
+		return nil, errors.NewBadRequestError("invalid grant_type parameter")
+	}
+
 	// User authentification by Users API
-	user, err := s.restUsersRepo.LoginUser(request.Email, request.Password)
+	user, err := s.restUsersRepo.LoginUser(login_id, password)
 	if err != nil {
 		return nil, err
 	}

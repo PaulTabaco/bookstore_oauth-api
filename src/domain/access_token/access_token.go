@@ -10,19 +10,43 @@ import (
 )
 
 const (
-	expirationTime = 24
+	expirationTime             = 24
+	GrantTypePassword          = "password"
+	GrantTypeClientCredentials = "client_credentials"
 )
+
+type AccessTokenRequest struct {
+	GrantType string `json:"grant_type"`
+	Scope     string `json:"scope"`
+
+	// Used for password grant type
+	Username string `json:"username"`
+	Password string `json:"password"`
+
+	// Used for client_credentials grant type
+	ClientId     string `json:"client_id"`
+	ClientSecret string `json:"client_secret"`
+}
+
+func (at *AccessTokenRequest) Validate() *errors.RestErr {
+	switch at.GrantType {
+	case GrantTypePassword:
+		//TODO: Validate parameters for each grant_type
+		break
+	case GrantTypeClientCredentials:
+		//TODO: Validate parameters for each grant_type
+		break
+	default:
+		return errors.NewBadRequestError("invalid grant_type parameter")
+	}
+	return nil
+}
 
 type AccessToken struct {
 	AccessToken string `json:"access_token"`
 	UserId      int64  `json:"user_id"`
 	ClientId    int64  `json:"client_id,omitempty"` // Web, Android, iOs etc.
 	Expires     int64  `json:"expires"`
-}
-
-type AccessTokenRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
 }
 
 func (at *AccessToken) Validate() *errors.RestErr {
@@ -39,22 +63,6 @@ func (at *AccessToken) Validate() *errors.RestErr {
 	if at.Expires <= 0 {
 		return errors.NewBadRequestError("invalid expires id")
 	}
-	return nil
-}
-
-func (at *AccessTokenRequest) Validate() *errors.RestErr {
-	// switch at.GrantType {
-	// case grantTypePassword:
-	// 	break
-
-	// case grandTypeClientCredentials:
-	// 	break
-
-	// default:
-	// 	return errors.NewBadRequestError("invalid grant_type parameter")
-	// }
-
-	//TODO: Validate parameters for each grant_type
 	return nil
 }
 
