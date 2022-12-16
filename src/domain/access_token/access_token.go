@@ -1,7 +1,6 @@
 package access_token
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -29,7 +28,7 @@ type AccessTokenRequest struct {
 	ClientSecret string `json:"client_secret"`
 }
 
-func (at *AccessTokenRequest) Validate() *rest_errors.RestErr {
+func (at *AccessTokenRequest) Validate() rest_errors.RestErr {
 	switch at.GrantType {
 	case GrantTypePassword:
 		//TODO: Validate parameters for each grant_type
@@ -38,7 +37,7 @@ func (at *AccessTokenRequest) Validate() *rest_errors.RestErr {
 		//TODO: Validate parameters for each grant_type
 		break
 	default:
-		return rest_errors.NewBadRequestError("", errors.New("invalid grant_type parameter"))
+		return rest_errors.NewBadRequestError("invalid grant_type parameter")
 	}
 	return nil
 }
@@ -50,19 +49,19 @@ type AccessToken struct {
 	Expires     int64  `json:"expires"`
 }
 
-func (at *AccessToken) Validate() *rest_errors.RestErr {
+func (at *AccessToken) Validate() rest_errors.RestErr {
 	at.AccessToken = strings.TrimSpace(at.AccessToken)
 	if at.AccessToken == "" {
-		return rest_errors.NewBadRequestError("", errors.New("invalid access token id"))
+		return rest_errors.NewBadRequestError("invalid access token id")
 	}
 	if at.UserId <= 0 {
-		return rest_errors.NewBadRequestError("", errors.New("invalid user id"))
+		return rest_errors.NewBadRequestError("invalid user id")
 	}
 	if at.ClientId <= 0 {
-		return rest_errors.NewBadRequestError("", errors.New("invalid client id"))
+		return rest_errors.NewBadRequestError("invalid client id")
 	}
 	if at.Expires <= 0 {
-		return rest_errors.NewBadRequestError("", errors.New("invalid expires id"))
+		return rest_errors.NewBadRequestError("invalid expires id")
 	}
 	return nil
 }

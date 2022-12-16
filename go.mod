@@ -3,7 +3,7 @@ module github.com/PaulTabaco/bookstore_oauth-api
 go 1.19
 
 require (
-	github.com/PaulTabaco/bookstore_utils v0.0.0-20221212224443-19484854a26a
+	github.com/PaulTabaco/bookstore_utils v0.0.0-20221216140554-1772c03f800c
 	github.com/gin-gonic/gin v1.8.1
 	github.com/gocql/gocql v1.3.1
 	github.com/mercadolibre/golang-restclient v0.0.0-20170701022150-51958130a0a0
