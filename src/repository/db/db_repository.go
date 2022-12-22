@@ -1,6 +1,8 @@
 package db
 
 import (
+	"errors"
+
 	"github.com/PaulTabaco/bookstore_oauth-api/src/clients/cassandra"
 	"github.com/PaulTabaco/bookstore_oauth-api/src/domain/access_token"
 	"github.com/PaulTabaco/bookstore_utils/rest_errors"
@@ -37,9 +39,8 @@ func (r *dbRepository) GetById(id string) (*access_token.AccessToken, rest_error
 		if err == gocql.ErrNotFound {
 			return nil, rest_errors.NewNotFoundError("no access token found with given id")
 		}
-		return nil, rest_errors.NewInternalServerError("error 1004", err)
+		return nil, rest_errors.NewInternalServerError("error when trying get current id", errors.New("database error"))
 	}
-
 	return &result, nil
 }
 
@@ -51,9 +52,8 @@ func (r *dbRepository) Create(at access_token.AccessToken) rest_errors.RestErr {
 		at.ClientId,
 		at.Expires,
 	).Exec(); err != nil {
-		return rest_errors.NewInternalServerError("error 1005", err)
+		return rest_errors.NewInternalServerError("error when trying to save access token in database", err)
 	}
-
 	return nil
 }
 
@@ -62,8 +62,7 @@ func (r *dbRepository) UpdateExpirationTime(at access_token.AccessToken) rest_er
 		at.Expires,
 		at.AccessToken,
 	).Exec(); err != nil {
-		return rest_errors.NewInternalServerError("error 1006", err)
+		return rest_errors.NewInternalServerError("error when trying to update current resource", errors.New("database error"))
 	}
-
 	return nil
 }

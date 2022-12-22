@@ -41,13 +41,13 @@ func (r *usersRepository) LoginUser(email string, password string) (*users.User,
 	}
 
 	if response.StatusCode > 299 {
-		var restErr rest_errors.RestErr
-		err := json.Unmarshal(response.Bytes(), &restErr)
+		apiErr, err := rest_errors.NewRestErrorFromBytes(response.Bytes())
 		if err != nil {
-			return nil, rest_errors.NewInternalServerError("", errors.New("invalid error interface when trying to login user"))
+			return nil, rest_errors.NewInternalServerError("invalid error interface when trying to login user", err)
 		}
-		return nil, restErr
+		return nil, apiErr
 	}
+
 	var user users.User
 	if err := json.Unmarshal(response.Bytes(), &user); err != nil {
 		return nil, rest_errors.NewInternalServerError("", errors.New("error when trying to unmarshal users response"))
